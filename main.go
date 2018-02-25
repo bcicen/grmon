@@ -12,7 +12,7 @@ import (
 
 var (
 	newline  = byte(10)
-	statusRe = regexp.MustCompile("^goroutine\\s(\\d+)\\s\\[(\\w+)\\]:")
+	statusRe = regexp.MustCompile("^goroutine\\s(\\d+)\\s\\[(.*)\\]:")
 )
 
 type Routine struct {
