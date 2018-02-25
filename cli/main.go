@@ -7,6 +7,7 @@ import (
 	"time"
 
 	ui "github.com/gizak/termui"
+	"github.com/nsf/termbox-go"
 )
 
 var (
@@ -23,22 +24,24 @@ var (
 )
 
 func Refresh() {
-	grid.Clear()
+	routines, err := poll()
+	if err == nil {
+		grid.Clear()
 
-	routines := poll()
-	for _, r := range routines {
-		w := newWidgets()
-		w.num.Text = fmt.Sprintf("%d", r.Num)
-		w.SetState(r.State)
-		w.desc.Text = r.Trace[0]
+		for _, r := range routines {
+			w := newWidgets()
+			w.num.Text = fmt.Sprintf("%d", r.Num)
+			w.SetState(r.State)
+			w.desc.Text = r.Trace[0]
 
-		r.Trace[0] = r.State
-		w.SetTrace(r.Trace)
-		grid.AddRow(w)
+			r.Trace[0] = r.State
+			w.SetTrace(r.Trace)
+			grid.AddRow(w)
+		}
+		lastRefresh = time.Now()
 	}
 
 	Render()
-	lastRefresh = time.Now()
 }
 
 func Render() {
@@ -135,6 +138,7 @@ func main() {
 		panic(err)
 	}
 	defer ui.Close()
+	termbox.SetOutputMode(termbox.Output256)
 
 	Refresh()
 

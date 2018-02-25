@@ -32,17 +32,17 @@ func (r Routines) Len() int           { return len(r) }
 func (r Routines) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 func (r Routines) Less(i, j int) bool { return sorters[sortKey](r[i], r[j]) }
 
-func poll() (routines Routines) {
+func poll() (routines Routines, err error) {
 	url := fmt.Sprintf("http://%s%s", *hostFlag, *endpointFlag)
 	r, err := client.Get(url)
 	if err != nil {
-		panic(err)
+		return
 	}
 	defer r.Body.Close()
 
 	err = json.NewDecoder(r.Body).Decode(&routines)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	sort.Sort(routines)
