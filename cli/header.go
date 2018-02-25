@@ -26,14 +26,16 @@ func (h *header) Align() {
 	h.widgets.Align()
 }
 
-func (h *header) Buffer() ui.Buffer {
+func (h *header) Update() {
 	t := "-"
 	if !lastRefresh.IsZero() {
 		t = lastRefresh.Format("15:04:05 MST")
 	}
 	h.ts.Text = fmt.Sprintf("last update: %s", t)
 	h.count.Text = fmt.Sprintf("total: %d", len(grid.rows))
+}
 
+func (h *header) Buffer() ui.Buffer {
 	buf := ui.NewBuffer()
 	buf.Merge(h.bg.Buffer())
 	buf.Merge(h.widgets.Buffer())

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 var (
 	grid        = NewGrid()
+	ctx         = context.Background()
 	lastRefresh time.Time
 )
 
@@ -46,6 +48,7 @@ func Refresh() {
 
 func Render() {
 	grid.Align()
+	grid.header.Update()
 	ui.Clear()
 	ui.Render(grid)
 }
@@ -74,11 +77,20 @@ func Display() bool {
 	var menu func()
 
 	if *intervalFlag > 0 {
-		ui.Handle("/timer/1s", func(ui.Event) {
-			if int(time.Since(lastRefresh).Seconds()) > *intervalFlag {
-				Refresh()
+		rctx, cancel := context.WithCancel(ctx)
+		defer cancel()
+		go func() {
+			for {
+				select {
+				case <-rctx.Done():
+					return
+				case <-time.After(500 * time.Millisecond):
+					if int(time.Since(lastRefresh).Seconds()) >= *intervalFlag {
+						Refresh()
+					}
+				}
 			}
-		})
+		}()
 	}
 
 	ui.Handle("/sys/wnd/resize", func(ui.Event) {

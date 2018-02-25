@@ -32,22 +32,22 @@ func (g *Grid) Align() {
 	g.header.Align()
 
 	y := 2
-	for _, w := range g.rows {
+	for n, w := range g.rows {
 		w.SetY(y)
 		w.Align()
 		y += w.Height()
+		if n == g.cursorPos {
+			g.cursor.Y = w.y
+		}
 	}
 }
 
 func (g *Grid) Buffer() ui.Buffer {
 	buf := ui.NewBuffer()
 	buf.Merge(g.header.Buffer())
-	for n, w := range g.rows {
+	for _, w := range g.rows {
 		buf.Merge(w.Buffer())
-		if n == g.cursorPos {
-			g.cursor.Y = w.y
-			buf.Merge(g.cursor.Buffer())
-		}
 	}
+	buf.Merge(g.cursor.Buffer())
 	return buf
 }
