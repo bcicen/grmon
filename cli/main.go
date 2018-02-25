@@ -47,18 +47,28 @@ func Render() {
 	ui.Render(grid)
 }
 
-func main() {
-	flag.Parse()
-
-	if *helpFlag {
-		printHelp()
-		os.Exit(0)
+func HelpDialog() {
+	p := ui.NewList()
+	p.X = 1
+	p.Height = 6
+	p.Width = 45
+	p.BorderLabel = "help"
+	p.Items = []string{
+		" r - refresh",
+		" <up>,<down>,j,k - move cursor position",
+		" <enter>,o - expand trace under cursor",
+		" <esc>,q - exit grmon",
 	}
+	ui.Clear()
+	ui.Render(p)
+	ui.Handle("/sys/kbd/", func(ui.Event) {
+		ui.StopLoop()
+	})
+	ui.Loop()
+}
 
-	if err := ui.Init(); err != nil {
-		panic(err)
-	}
-	defer ui.Close()
+func Display() bool {
+	var menu func()
 
 	if *intervalFlag > 0 {
 		ui.Handle("/timer/1s", func(ui.Event) {
@@ -67,6 +77,10 @@ func main() {
 			}
 		})
 	}
+
+	ui.Handle("/sys/wnd/resize", func(ui.Event) {
+		Render()
+	})
 
 	HandleKeys("up", func() {
 		if grid.cursorPos > 0 {
@@ -91,12 +105,43 @@ func main() {
 		Refresh()
 	})
 
-	ui.Handle("/sys/kbd/q", func(ui.Event) {
+	HandleKeys("exit", func() {
 		ui.StopLoop()
 	})
 
-	Refresh()
+	HandleKeys("help", func() {
+		menu = HelpDialog
+		ui.StopLoop()
+	})
+
+	Render()
 	ui.Loop()
+	if menu != nil {
+		menu()
+		return false
+	}
+	return true
+}
+
+func main() {
+	flag.Parse()
+
+	if *helpFlag {
+		printHelp()
+		os.Exit(0)
+	}
+
+	if err := ui.Init(); err != nil {
+		panic(err)
+	}
+	defer ui.Close()
+
+	Refresh()
+
+	var quit bool
+	for !quit {
+		quit = Display()
+	}
 }
 
 var helpMsg = `grmon - goroutine monitor
