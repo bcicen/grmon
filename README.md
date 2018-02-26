@@ -53,9 +53,8 @@ q | exit grmon
 
 ### Options
 
-Option | Description
---- | ---
--endpoint	| URL endpoint for grmon (default "/debug/grmon")
--host | listening grmon host (default "localhost:1234")
--i | time in seconds between refresh, 0 to disable (default 5)
--self | monitor grmon itself
+Option | Description | Default
+--- | --- | ---
+-endpoint	| URL endpoint for grmon | /debug/grmon
+-host | listening grmon host | localhost:1234
+-i | time in seconds between refresh, 0 to disable | 5
