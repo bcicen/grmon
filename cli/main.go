@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 )
 
 var (
+	wmap        = NewWidgetMap()
 	grid        = NewGrid()
 	ctx         = context.Background()
 	lastRefresh time.Time
@@ -21,6 +23,7 @@ var (
 var (
 	helpFlag     = flag.Bool("h", false, "display this help dialog")
 	hostFlag     = flag.String("host", "localhost:1234", "listening grmon host")
+	selfFlag     = flag.Bool("self", false, "monitor grmon itself")
 	endpointFlag = flag.String("endpoint", "/debug/grmon", "URL endpoint for grmon")
 	intervalFlag = flag.Int("i", 0, "time in seconds between refresh")
 )
@@ -31,8 +34,7 @@ func Refresh() {
 		grid.Clear()
 
 		for _, r := range routines {
-			w := newWidgets()
-			w.num.Text = fmt.Sprintf("%d", r.Num)
+			w := wmap.MustGet(r.Num)
 			w.SetState(r.State)
 			w.desc.Text = r.Trace[0]
 
@@ -144,6 +146,10 @@ func main() {
 	if *helpFlag {
 		printHelp()
 		os.Exit(0)
+	}
+
+	if *selfFlag {
+		go http.ListenAndServe(":1234", nil)
 	}
 
 	if err := ui.Init(); err != nil {

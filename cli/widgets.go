@@ -1,10 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"strings"
+	"sync"
 
 	ui "github.com/gizak/termui"
 )
+
+type WidgetMap struct {
+	m    map[int]*widgets
+	lock sync.RWMutex
+}
+
+func NewWidgetMap() *WidgetMap {
+	return &WidgetMap{m: make(map[int]*widgets)}
+}
+
+func (wm *WidgetMap) MustGet(id int) *widgets {
+	if w, ok := wm.m[id]; ok {
+		return w
+	}
+	return wm.add(id)
+}
+
+func (wm *WidgetMap) Del(id int) {
+	wm.lock.Lock()
+	defer wm.lock.Unlock()
+	if _, ok := wm.m[id]; ok {
+		delete(wm.m, id)
+	}
+}
+
+func (wm *WidgetMap) add(id int) *widgets {
+	wm.lock.Lock()
+	defer wm.lock.Unlock()
+	w := newWidgets()
+	w.num.Text = fmt.Sprintf("%d", id)
+	wm.m[id] = w
+	return w
+}
 
 type widgets struct {
 	num       *ui.Par

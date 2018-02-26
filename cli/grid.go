@@ -48,6 +48,8 @@ func (g *Grid) Buffer() ui.Buffer {
 	for _, w := range g.rows {
 		buf.Merge(w.Buffer())
 	}
-	buf.Merge(g.cursor.Buffer())
+	if len(g.rows) > 0 {
+		buf.Merge(g.cursor.Buffer())
+	}
 	return buf
 }
