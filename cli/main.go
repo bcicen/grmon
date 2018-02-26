@@ -55,6 +55,21 @@ func Render() {
 	ui.Render(grid)
 }
 
+func TraceDialog() {
+	p := ui.NewList()
+	p.X = 1
+	p.Height = ui.TermHeight()
+	p.Width = ui.TermWidth()
+	p.Border = false
+	p.Items = grid.rows[grid.cursorPos].trace.Items
+	ui.Clear()
+	ui.Render(p)
+	ui.Handle("/sys/kbd/", func(ui.Event) {
+		ui.StopLoop()
+	})
+	ui.Loop()
+}
+
 func HelpDialog() {
 	p := ui.NewList()
 	p.X = 1
@@ -66,6 +81,7 @@ func HelpDialog() {
 		" p - pause/unpause automatic updates",
 		" <up>,<down>,j,k - move cursor position",
 		" <enter>,o - expand trace under cursor",
+		" t - open trace in full screen",
 		" <esc>,q - exit grmon",
 	}
 	ui.Clear()
@@ -123,6 +139,11 @@ func Display() bool {
 
 	ui.Handle("/sys/kbd/p", func(ui.Event) {
 		next = func() { paused = paused != true }
+		ui.StopLoop()
+	})
+
+	ui.Handle("/sys/kbd/t", func(ui.Event) {
+		next = TraceDialog
 		ui.StopLoop()
 	})
 
