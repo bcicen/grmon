@@ -59,3 +59,10 @@ Option | Description | Default
 -endpoint	| URL endpoint for grmon | /debug/grmon
 -host | listening grmon host | localhost:1234
 -i | time in seconds between refresh, 0 to disable | 5
+
+
+## Roadmap
+
+* Add scrolling/paging
+* Simple filtering by goroutine state
+* Hierarchal display by package
