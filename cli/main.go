@@ -16,6 +16,7 @@ var (
 	wmap        = NewWidgetMap()
 	grid        = NewGrid()
 	ctx         = context.Background()
+	paused      bool
 	lastRefresh time.Time
 )
 
@@ -25,7 +26,7 @@ var (
 	hostFlag     = flag.String("host", "localhost:1234", "listening grmon host")
 	selfFlag     = flag.Bool("self", false, "monitor grmon itself")
 	endpointFlag = flag.String("endpoint", "/debug/grmon", "URL endpoint for grmon")
-	intervalFlag = flag.Int("i", 0, "time in seconds between refresh")
+	intervalFlag = flag.Int("i", 5, "time in seconds between refresh")
 )
 
 func Refresh() {
@@ -49,7 +50,6 @@ func Refresh() {
 }
 
 func Render() {
-	grid.Align()
 	grid.header.Update()
 	ui.Clear()
 	ui.Render(grid)
@@ -62,7 +62,8 @@ func HelpDialog() {
 	p.Width = 45
 	p.BorderLabel = "help"
 	p.Items = []string{
-		" r - refresh",
+		" r - manual refresh",
+		" p - pause/unpause automatic updates",
 		" <up>,<down>,j,k - move cursor position",
 		" <enter>,o - expand trace under cursor",
 		" <esc>,q - exit grmon",
@@ -76,11 +77,12 @@ func HelpDialog() {
 }
 
 func Display() bool {
-	var menu func()
+	var next func()
 
-	if *intervalFlag > 0 {
-		rctx, cancel := context.WithCancel(ctx)
-		defer cancel()
+	rctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	if *intervalFlag > 0 && !paused {
 		go func() {
 			for {
 				select {
@@ -96,6 +98,7 @@ func Display() bool {
 	}
 
 	ui.Handle("/sys/wnd/resize", func(ui.Event) {
+		grid.Align()
 		Render()
 	})
 
@@ -118,6 +121,11 @@ func Display() bool {
 		Render()
 	})
 
+	ui.Handle("/sys/kbd/p", func(ui.Event) {
+		next = func() { paused = paused != true }
+		ui.StopLoop()
+	})
+
 	ui.Handle("/sys/kbd/r", func(ui.Event) {
 		Refresh()
 	})
@@ -127,14 +135,15 @@ func Display() bool {
 	})
 
 	HandleKeys("help", func() {
-		menu = HelpDialog
+		next = HelpDialog
 		ui.StopLoop()
 	})
 
+	grid.Align()
 	Render()
 	ui.Loop()
-	if menu != nil {
-		menu()
+	if next != nil {
+		next()
 		return false
 	}
 	return true

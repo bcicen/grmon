@@ -9,6 +9,8 @@ type Grid struct {
 	rows      []*widgets
 	cursor    *ui.Par
 	cursorPos int
+	y         int
+	maxY      int
 }
 
 func NewGrid() *Grid {
@@ -19,10 +21,12 @@ func NewGrid() *Grid {
 	return &Grid{
 		header: newHeader(),
 		cursor: c,
+		y:      2,
 	}
 }
 
 func (g *Grid) AddRow(w *widgets) { g.rows = append(g.rows, w) }
+
 func (g *Grid) Clear() {
 	g.cursorPos = 0
 	g.rows = []*widgets{}
@@ -30,26 +34,29 @@ func (g *Grid) Clear() {
 
 func (g *Grid) Align() {
 	g.header.Align()
-
-	y := 2
-	for n, w := range g.rows {
-		w.SetY(y)
+	for _, w := range g.rows {
 		w.Align()
-		y += w.Height()
-		if n == g.cursorPos {
-			g.cursor.Y = w.y
-		}
 	}
+	g.maxY = ui.TermHeight() - g.y
 }
 
 func (g *Grid) Buffer() ui.Buffer {
 	buf := ui.NewBuffer()
 	buf.Merge(g.header.Buffer())
-	for _, w := range g.rows {
+
+	y := g.y
+	for n, w := range g.rows {
+		w.SetY(y)
 		buf.Merge(w.Buffer())
+		if paused && n == g.cursorPos {
+			g.cursor.Y = y
+			buf.Merge(g.cursor.Buffer())
+		}
+		y += w.Height()
+		if y >= g.maxY {
+			break
+		}
 	}
-	if len(g.rows) > 0 {
-		buf.Merge(g.cursor.Buffer())
-	}
+
 	return buf
 }

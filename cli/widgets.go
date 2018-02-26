@@ -37,6 +37,7 @@ func (wm *WidgetMap) add(id int) *widgets {
 	defer wm.lock.Unlock()
 	w := newWidgets()
 	w.num.Text = fmt.Sprintf("%d", id)
+	w.Align()
 	wm.m[id] = w
 	return w
 }
@@ -95,11 +96,13 @@ func (w *widgets) Height() int {
 }
 
 func (w *widgets) SetY(y int) {
-	w.y = y
-	w.num.Y = y
-	w.state.Y = y
-	w.desc.Y = y
-	w.trace.Y = y + 1
+	if y != w.y {
+		w.y = y
+		w.num.Y = y
+		w.state.Y = y
+		w.desc.Y = y
+		w.trace.Y = y + 1
+	}
 }
 
 func (w *widgets) Align() {
