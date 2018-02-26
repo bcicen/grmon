@@ -182,6 +182,10 @@ func main() {
 		go http.ListenAndServe(":1234", nil)
 	}
 
+	if *intervalFlag == 0 {
+		paused = true
+	}
+
 	if err := ui.Init(); err != nil {
 		panic(err)
 	}

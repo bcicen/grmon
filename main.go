@@ -58,6 +58,8 @@ func ReadRoutines() (routines []*Routine) {
 	return
 }
 
+func Start() { go http.ListenAndServe(":1234", nil) }
+
 func grmonHandler(w http.ResponseWriter, r *http.Request) {
 	routines := ReadRoutines()
 	data, err := json.Marshal(routines)
