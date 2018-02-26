@@ -4,6 +4,14 @@ Command line monitoring for goroutines
 
 <p align="center"><img src="https://bradley.codes/static/img/grmon.gif" alt="grmon"/></p>
 
+## Install
+
+```bash
+go get -d github.com/bcicen/grmon
+cd ${GOPATH}/src/github.com/bcicen/grmon
+make install
+```
+
 ## Usage
 
 Simply import and call `grmon.Start()` somewhere in your code:
