@@ -78,6 +78,7 @@ func HelpDialog() {
 	p.BorderLabel = "help"
 	p.Items = []string{
 		" r - manual refresh",
+		" s - toggle sort column and refresh",
 		" p - pause/unpause automatic updates",
 		" <up>,<down>,j,k - move cursor position",
 		" <enter>,o - expand trace under cursor",
@@ -142,13 +143,22 @@ func Display() bool {
 		ui.StopLoop()
 	})
 
+	ui.Handle("/sys/kbd/r", func(ui.Event) {
+		Refresh()
+	})
+
+	ui.Handle("/sys/kbd/s", func(ui.Event) {
+		if sortKey == "num" {
+			sortKey = "state"
+		} else {
+			sortKey = "num"
+		}
+		Refresh()
+	})
+
 	ui.Handle("/sys/kbd/t", func(ui.Event) {
 		next = TraceDialog
 		ui.StopLoop()
-	})
-
-	ui.Handle("/sys/kbd/r", func(ui.Event) {
-		Refresh()
 	})
 
 	HandleKeys("exit", func() {
@@ -163,6 +173,8 @@ func Display() bool {
 	grid.Align()
 	Render()
 	ui.Loop()
+
+	cancel()
 	if next != nil {
 		next()
 		return false
