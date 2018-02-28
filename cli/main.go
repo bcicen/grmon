@@ -120,22 +120,22 @@ func Display() bool {
 	})
 
 	HandleKeys("up", func() {
-		if grid.cursorPos > 0 {
-			grid.cursorPos--
+		if grid.CursorUp() {
 			Render()
 		}
 	})
 
 	HandleKeys("down", func() {
-		if grid.cursorPos < len(grid.rows)-1 {
-			grid.cursorPos++
+		if grid.CursorDown() {
 			Render()
 		}
 	})
 
 	HandleKeys("enter", func() {
-		grid.rows[grid.cursorPos].ToggleShowTrace()
-		Render()
+		if paused {
+			grid.rows[grid.cursorPos].ToggleShowTrace()
+			Render()
+		}
 	})
 
 	ui.Handle("/sys/kbd/p", func(ui.Event) {
