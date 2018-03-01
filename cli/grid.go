@@ -6,6 +6,7 @@ import (
 
 type Grid struct {
 	header    *header
+	footer    *footer
 	rows      []*widgets
 	cursor    *ui.Par
 	cursorPos int
@@ -20,6 +21,7 @@ func NewGrid() *Grid {
 	c.TextFgColor = ui.ColorCyan
 	return &Grid{
 		header: newHeader(),
+		footer: newFooter(),
 		cursor: c,
 		y:      2,
 	}
@@ -61,10 +63,11 @@ func (g *Grid) Clear() {
 
 func (g *Grid) Align() {
 	g.header.Align()
+	g.footer.Align()
 	for _, w := range g.rows {
 		w.Align()
 	}
-	g.maxRows = ui.TermHeight() - 4
+	g.maxRows = ui.TermHeight() - 5
 }
 
 func (g *Grid) Buffer() ui.Buffer {
@@ -83,5 +86,6 @@ func (g *Grid) Buffer() ui.Buffer {
 	}
 
 	buf.Merge(g.header.Buffer())
+	buf.Merge(g.footer.Buffer())
 	return buf
 }

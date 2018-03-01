@@ -50,7 +50,7 @@ func Refresh() {
 }
 
 func Render() {
-	grid.header.Update()
+	grid.footer.Update()
 	ui.Clear()
 	ui.Render(grid)
 }
