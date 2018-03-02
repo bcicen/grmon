@@ -77,13 +77,27 @@ func (w *widgets) SetTrace(a []string) {
 
 func (w *widgets) ToggleShowTrace() { w.showTrace = w.showTrace != true }
 
+type Column interface {
+	ui.Bufferer
+	SetY(int)
+}
+
+func (w *widgets) cols() []Column {
+	a := []Column{
+		w.num,
+		w.state,
+		w.desc,
+	}
+	if w.showTrace {
+		a = append(a, w.trace)
+	}
+	return a
+}
+
 func (w *widgets) Buffer() ui.Buffer {
 	buf := ui.NewBuffer()
-	buf.Merge(w.num.Buffer())
-	buf.Merge(w.state.Buffer())
-	buf.Merge(w.desc.Buffer())
-	if w.showTrace {
-		buf.Merge(w.trace.Buffer())
+	for _, b := range w.cols() {
+		buf.Merge(b.Buffer())
 	}
 	return buf
 }
@@ -98,11 +112,11 @@ func (w *widgets) Height() int {
 func (w *widgets) SetY(y int) {
 	if y != w.y {
 		w.y = y
-		w.num.Y = y
-		w.state.Y = y
-		w.desc.Y = y
-		w.trace.Y = y + 1
+		for _, b := range w.cols() {
+			b.SetY(y)
+		}
 	}
+	w.trace.Y += 1
 }
 
 func (w *widgets) Align() {
@@ -111,32 +125,28 @@ func (w *widgets) Align() {
 }
 
 func newWidgets() *widgets {
-	p0 := ui.NewPar("")
-	p0.X = 2
-	p0.Height = 1
-	p0.Width = 5
-	p0.Border = false
-	p0.TextBgColor = ui.ColorDefault
+	num := newCol(2, 5)
+	state := newCol(7, 20)
+	desc := newCol(27, 20)
 
-	p1 := ui.NewPar("")
-	p1.X = 7
-	p1.Height = 1
-	p1.Width = 20
-	p1.Border = false
-
-	p2 := ui.NewPar("")
-	p2.X = 27
-	p2.Height = 1
-	p2.Border = false
-
-	ls := ui.NewList()
-	ls.X = 7
-	ls.Border = false
+	trace := ui.NewList()
+	trace.X = 7
+	trace.Border = false
 
 	return &widgets{
-		num:   p0,
-		state: p1,
-		desc:  p2,
-		trace: ls,
+		num:   num,
+		state: state,
+		desc:  desc,
+		trace: trace,
 	}
+}
+
+func newCol(x, w int) *ui.Par {
+	p := ui.NewPar("")
+	p.X = x
+	p.Height = 1
+	p.Width = w
+	p.Border = false
+	p.TextBgColor = ui.ColorDefault
+	return p
 }
