@@ -11,14 +11,16 @@ import (
 )
 
 var (
-	newline  = byte(10)
-	statusRe = regexp.MustCompile("^goroutine\\s(\\d+)\\s\\[(.*)\\]:")
+	newline   = byte(10)
+	statusRe  = regexp.MustCompile("^goroutine\\s(\\d+)\\s\\[(.*)\\]:")
+	createdRe = regexp.MustCompile("^created by (.*)")
 )
 
 type Routine struct {
-	Num   int      `json:"no"`
-	State string   `json:"state"`
-	Trace []string `json:"trace"`
+	Num       int      `json:"no"`
+	State     string   `json:"state"`
+	CreatedBy string   `json:"created_by"`
+	Trace     []string `json:"trace"`
 }
 
 func ReadRoutines() (routines []*Routine) {
@@ -47,6 +49,11 @@ func ReadRoutines() (routines []*Routine) {
 			p.State = mg[2]
 			routines = append(routines, p)
 			continue
+		}
+
+		mg = createdRe.FindStringSubmatch(line)
+		if len(mg) > 1 {
+			p.CreatedBy = mg[1]
 		}
 
 		line = strings.Trim(line, "\n")
