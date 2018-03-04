@@ -22,13 +22,14 @@ func TraceDialog() {
 func HelpDialog() {
 	p := ui.NewList()
 	p.X = 1
-	p.Height = 6
+	p.Height = 10
 	p.Width = 45
 	p.BorderLabel = "help"
 	p.Items = []string{
 		" r - manual refresh",
-		" s - toggle sort column and refresh",
 		" p - pause/unpause automatic updates",
+		" s - toggle sort column and refresh",
+		" f - filter by keyword",
 		" <up>,<down>,j,k - move cursor position",
 		" <enter>,o - expand trace under cursor",
 		" t - open trace in full screen",

@@ -45,8 +45,9 @@ By default, `grmon` will automatically refresh every 5s. Pause automatic refresh
 Key | Action
 --- | ---
 r | manually refresh
-s | toggle sort column and refresh
 p | pause/unpause automatic updates
+s | toggle sort column and refresh
+f | filter by keyword
 \<up\>,\<down\>,j,k | move cursor position
 \<enter\>,o | expand trace under cursor
 t | open trace in full screen mode
@@ -63,6 +64,4 @@ Option | Description | Default
 
 ## Roadmap
 
-* Add scrolling/paging
-* Simple filtering by goroutine state
-* Hierarchal display by package
+* Hierarchal/tree display
