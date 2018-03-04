@@ -10,23 +10,23 @@ import (
 	"github.com/bcicen/grmon"
 )
 
-type sortFn func(grmon.Routine, grmon.Routine) bool
+type sortFn func(*grmon.Routine, *grmon.Routine) bool
 
 var (
 	client = &http.Client{Timeout: 10 * time.Second}
 
 	sortKey = "num"
 	sorters = map[string]sortFn{
-		"num": func(r1, r2 grmon.Routine) bool {
+		"num": func(r1, r2 *grmon.Routine) bool {
 			return r1.Num < r2.Num
 		},
-		"state": func(r1, r2 grmon.Routine) bool {
+		"state": func(r1, r2 *grmon.Routine) bool {
 			return r1.State < r2.State
 		},
 	}
 )
 
-type Routines []grmon.Routine
+type Routines []*grmon.Routine
 
 func (r Routines) Sort()              { sort.Sort(r) }
 func (r Routines) Len() int           { return len(r) }

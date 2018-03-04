@@ -46,10 +46,9 @@ func Refresh() {
 			r.Trace[0] = r.State
 			w.SetTrace(r.Trace)
 		}
-		RebuildRows()
 		lastRefresh = time.Now()
+		RebuildRows()
 	}
-
 }
 
 func RebuildRows() {
@@ -64,7 +63,7 @@ func RebuildRows() {
 			continue
 		}
 
-		for _, l := range r.Trace {
+		for _, l := range w.trace.Items {
 			if strings.Contains(l, filter) {
 				grid.AddRow(w)
 				break
@@ -79,44 +78,6 @@ func Render() {
 	grid.footer.Update()
 	ui.Clear()
 	ui.Render(grid)
-}
-
-func TraceDialog() {
-	p := ui.NewList()
-	p.X = 1
-	p.Height = ui.TermHeight()
-	p.Width = ui.TermWidth()
-	p.Border = false
-	p.Items = grid.rows[grid.cursorPos].trace.Items
-	ui.Clear()
-	ui.Render(p)
-	ui.Handle("/sys/kbd/", func(ui.Event) {
-		ui.StopLoop()
-	})
-	ui.Loop()
-}
-
-func HelpDialog() {
-	p := ui.NewList()
-	p.X = 1
-	p.Height = 6
-	p.Width = 45
-	p.BorderLabel = "help"
-	p.Items = []string{
-		" r - manual refresh",
-		" s - toggle sort column and refresh",
-		" p - pause/unpause automatic updates",
-		" <up>,<down>,j,k - move cursor position",
-		" <enter>,o - expand trace under cursor",
-		" t - open trace in full screen",
-		" <esc>,q - exit grmon",
-	}
-	ui.Clear()
-	ui.Render(p)
-	ui.Handle("/sys/kbd/", func(ui.Event) {
-		ui.StopLoop()
-	})
-	ui.Loop()
 }
 
 func Display() bool {
@@ -162,6 +123,11 @@ func Display() bool {
 			grid.rows[grid.cursorPos].ToggleShowTrace()
 			Render()
 		}
+	})
+
+	ui.Handle("/sys/kbd/f", func(ui.Event) {
+		next = FilterDialog
+		ui.StopLoop()
 	})
 
 	ui.Handle("/sys/kbd/p", func(ui.Event) {

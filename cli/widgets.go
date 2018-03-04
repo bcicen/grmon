@@ -88,9 +88,6 @@ func (w *widgets) cols() []Column {
 		w.state,
 		w.desc,
 	}
-	if w.showTrace {
-		a = append(a, w.trace)
-	}
 	return a
 }
 
@@ -98,6 +95,9 @@ func (w *widgets) Buffer() ui.Buffer {
 	buf := ui.NewBuffer()
 	for _, b := range w.cols() {
 		buf.Merge(b.Buffer())
+	}
+	if w.showTrace {
+		buf.Merge(w.trace.Buffer())
 	}
 	return buf
 }
@@ -116,7 +116,7 @@ func (w *widgets) SetY(y int) {
 			b.SetY(y)
 		}
 	}
-	w.trace.Y += 1
+	w.trace.Y = y + 1
 }
 
 func (w *widgets) Align() {
