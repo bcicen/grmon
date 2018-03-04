@@ -7,9 +7,7 @@ Command line monitoring for goroutines
 ## Install
 
 ```bash
-go get -d github.com/bcicen/grmon
-cd ${GOPATH}/src/github.com/bcicen/grmon
-make install
+go get -u github.com/bcicen/grmon/cmd/grmon
 ```
 
 ## Usage
