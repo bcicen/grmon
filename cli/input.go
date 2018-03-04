@@ -3,7 +3,7 @@ package main
 import (
 	"strings"
 
-	ui "github.com/gizak/termui"
+	ui "github.com/bcicen/termui"
 )
 
 var (

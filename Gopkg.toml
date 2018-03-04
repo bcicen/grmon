@@ -23,8 +23,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/gizak/termui"
-  source = "https://github.com/bcicen/termui"
+  name = "github.com/bcicen/termui"
 
 [[constraint]]
   branch = "master"

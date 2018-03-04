@@ -1,7 +1,7 @@
 package main
 
 import (
-	ui "github.com/gizak/termui"
+	ui "github.com/bcicen/termui"
 )
 
 type header struct {

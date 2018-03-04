@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	ui "github.com/gizak/termui"
+	ui "github.com/bcicen/termui"
 )
 
 const footerHeight = 2

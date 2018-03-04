@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	ui "github.com/gizak/termui"
+	ui "github.com/bcicen/termui"
 	"github.com/nsf/termbox-go"
 )
 
