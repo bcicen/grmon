@@ -28,6 +28,7 @@ var (
 
 type Routines []grmon.Routine
 
+func (r Routines) Sort()              { sort.Sort(r) }
 func (r Routines) Len() int           { return len(r) }
 func (r Routines) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 func (r Routines) Less(i, j int) bool { return sorters[sortKey](r[i], r[j]) }

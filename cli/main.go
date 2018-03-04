@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	ui "github.com/gizak/termui"
@@ -17,6 +18,8 @@ var (
 	grid        = NewGrid()
 	ctx         = context.Background()
 	paused      bool
+	filter      string
+	routines    Routines
 	lastRefresh time.Time
 )
 
@@ -30,10 +33,11 @@ var (
 )
 
 func Refresh() {
-	routines, err := poll()
-	if err == nil {
-		grid.Clear()
+	var err error
+	routines, err = poll()
 
+	if err == nil {
+		// update widget data
 		for _, r := range routines {
 			w := wmap.MustGet(r.Num)
 			w.SetState(r.State)
@@ -41,9 +45,31 @@ func Refresh() {
 
 			r.Trace[0] = r.State
 			w.SetTrace(r.Trace)
-			grid.AddRow(w)
 		}
+		RebuildRows()
 		lastRefresh = time.Now()
+	}
+
+}
+
+func RebuildRows() {
+	routines.Sort()
+	grid.Clear()
+
+	for _, r := range routines {
+		w := wmap.MustGet(r.Num)
+
+		if filter == "" {
+			grid.AddRow(w)
+			continue
+		}
+
+		for _, l := range r.Trace {
+			if strings.Contains(l, filter) {
+				grid.AddRow(w)
+				break
+			}
+		}
 	}
 
 	Render()
@@ -153,7 +179,7 @@ func Display() bool {
 		} else {
 			sortKey = "num"
 		}
-		Refresh()
+		RebuildRows()
 	})
 
 	ui.Handle("/sys/kbd/t", func(ui.Event) {
