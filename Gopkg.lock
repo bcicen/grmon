@@ -3,10 +3,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/gizak/termui"
+  name = "github.com/bcicen/termui"
   packages = ["."]
-  revision = "cdc199d7ea432fd8187db35f0247285d6f5b0267"
-  source = "https://github.com/bcicen/termui"
+  revision = "fa01b6e1cd5640b78c3e3e26d763d3cf8f5d0334"
 
 [[projects]]
   name = "github.com/maruel/panicparse"
@@ -35,6 +34,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "748cfd89208477dced6470580b7b06b24aa1db4dbdce5630af47ddb39fe17526"
+  inputs-digest = "90f8c23ac54c486e7f337b5db1b66364f228a3dfe5863d4cce6e6a595f2573c0"
   solver-name = "gps-cdcl"
   solver-version = 1
