@@ -149,8 +149,10 @@ func Display() bool {
 	})
 
 	ui.Handle("/sys/kbd/t", func(ui.Event) {
-		next = TraceDialog
-		ui.StopLoop()
+		if paused {
+			next = TraceDialog
+			ui.StopLoop()
+		}
 	})
 
 	HandleKeys("exit", func() {

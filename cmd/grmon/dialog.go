@@ -5,6 +5,9 @@ import (
 )
 
 func TraceDialog() {
+	ui.ResetHandlers()
+	defer ui.ResetHandlers()
+
 	p := ui.NewList()
 	p.X = 1
 	p.Height = ui.TermHeight()
@@ -13,13 +16,24 @@ func TraceDialog() {
 	p.Items = grid.rows[grid.cursorPos].trace.Items
 	ui.Clear()
 	ui.Render(p)
+
 	ui.Handle("/sys/kbd/", func(ui.Event) {
 		ui.StopLoop()
 	})
+	ui.Handle("/sys/wnd/resize", func(ui.Event) {
+		p.Y = 0
+		p.Height = ui.TermHeight()
+		p.Width = ui.TermWidth()
+		ui.Render(p)
+	})
+
 	ui.Loop()
 }
 
 func HelpDialog() {
+	ui.ResetHandlers()
+	defer ui.ResetHandlers()
+
 	p := ui.NewList()
 	p.X = 1
 	p.Height = 10
