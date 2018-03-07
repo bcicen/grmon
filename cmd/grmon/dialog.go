@@ -8,24 +8,43 @@ func TraceDialog() {
 	ui.ResetHandlers()
 	defer ui.ResetHandlers()
 
-	p := ui.NewList()
-	p.X = 1
-	p.Height = ui.TermHeight()
-	p.Width = ui.TermWidth()
-	p.Border = false
-	p.Items = grid.rows[grid.cursorPos].trace.Items
-	ui.Clear()
-	ui.Render(p)
+	var offset int
+	items := grid.rows[grid.cursorPos].trace.Items
 
-	ui.Handle("/sys/kbd/", func(ui.Event) {
-		ui.StopLoop()
+	l := ui.NewList()
+	l.X = 1
+	l.Border = false
+
+	var redraw = func() {
+		l.Items = items[offset:]
+		ui.Render(l)
+	}
+
+	var resize = func() {
+		l.Height = ui.TermHeight()
+		l.Width = ui.TermWidth()
+		redraw()
+	}
+
+	ui.Clear()
+	resize()
+
+	HandleKeys("up", func() {
+		if offset > 0 {
+			offset--
+			redraw()
+		}
 	})
-	ui.Handle("/sys/wnd/resize", func(ui.Event) {
-		p.Y = 0
-		p.Height = ui.TermHeight()
-		p.Width = ui.TermWidth()
-		ui.Render(p)
+
+	HandleKeys("down", func() {
+		if l.Height+offset < len(items) {
+			offset++
+			redraw()
+		}
 	})
+
+	ui.Handle("/sys/kbd/", func(ui.Event) { ui.StopLoop() })
+	ui.Handle("/sys/wnd/resize", func(ui.Event) { resize() })
 
 	ui.Loop()
 }
