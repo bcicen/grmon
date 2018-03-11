@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -36,7 +36,7 @@ func (wm *WidgetMap) add(id int) *widgets {
 	wm.lock.Lock()
 	defer wm.lock.Unlock()
 	w := newWidgets()
-	w.num.Text = fmt.Sprintf("%d", id)
+	w.num.Text = strconv.Itoa(id)
 	w.Align()
 	wm.m[id] = w
 	return w
