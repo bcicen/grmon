@@ -14,6 +14,7 @@ var (
 	newline   = byte(10)
 	statusRe  = regexp.MustCompile("^goroutine\\s(\\d+)\\s\\[(.*)\\]:")
 	createdRe = regexp.MustCompile("^created by (.*)")
+	threadRe  = regexp.MustCompile("^threadcreate\\sprofile:\\stotal\\s(\\d+)")
 )
 
 type Routine struct {
@@ -63,6 +64,43 @@ func ReadRoutines() (routines []*Routine) {
 	}
 
 	return
+}
+
+type ThreadCreate struct {
+	Count int      `json:"count"`
+	Trace []string `json:"trace"`
+}
+
+func ReadThreads() *ThreadCreate {
+	var buf bytes.Buffer
+
+	pprof.Lookup("threadcreate").WriteTo(&buf, 1)
+
+	t := &ThreadCreate{}
+
+	for {
+		line, err := buf.ReadString(newline)
+		if err != nil {
+			break
+		}
+
+		mg := threadRe.FindStringSubmatch(line)
+		if len(mg) > 1 {
+			i, err := strconv.Atoi(mg[1])
+			if err != nil {
+				panic(err)
+			}
+			t.Count = i
+			continue
+		}
+
+		line = strings.Trim(line, "\n")
+		if line != "" {
+			t.Trace = append(t.Trace, line)
+		}
+	}
+
+	return t
 }
 
 func Start() { go http.ListenAndServe(":1234", nil) }
