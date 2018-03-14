@@ -24,11 +24,8 @@ type Routine struct {
 	Trace     []string `json:"trace"`
 }
 
-func ReadRoutines() (routines []*Routine) {
+func ReadRoutines(buf bytes.Buffer) (routines []*Routine) {
 	var p *Routine
-	var buf bytes.Buffer
-
-	pprof.Lookup("goroutine").WriteTo(&buf, 2)
 
 	for {
 		line, err := buf.ReadString(newline)
@@ -71,11 +68,7 @@ type ThreadCreate struct {
 	Trace []string `json:"trace"`
 }
 
-func ReadThreads() *ThreadCreate {
-	var buf bytes.Buffer
-
-	pprof.Lookup("threadcreate").WriteTo(&buf, 1)
-
+func ReadThreads(buf bytes.Buffer) *ThreadCreate {
 	t := &ThreadCreate{}
 
 	for {
@@ -106,7 +99,11 @@ func ReadThreads() *ThreadCreate {
 func Start() { go http.ListenAndServe(":1234", nil) }
 
 func grmonHandler(w http.ResponseWriter, r *http.Request) {
-	routines := ReadRoutines()
+	var buf bytes.Buffer
+
+	pprof.Lookup("goroutine").WriteTo(&buf, 2)
+	routines := ReadRoutines(buf)
+
 	data, err := json.Marshal(routines)
 	if err != nil {
 		panic(err)
