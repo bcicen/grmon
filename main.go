@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"strings"
 	"time"
@@ -185,7 +186,7 @@ func main() {
 	}
 
 	if *selfFlag {
-		go http.ListenAndServe(":1234", nil)
+		go http.ListenAndServe("localhost:1234", nil)
 	}
 
 	if *intervalFlag == 0 {
