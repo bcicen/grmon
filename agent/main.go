@@ -1,4 +1,4 @@
-package agent
+package grmon
 
 import (
 	"net/http"

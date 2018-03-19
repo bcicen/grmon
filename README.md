@@ -7,7 +7,7 @@ Command line monitoring for goroutines
 ## Install
 
 ```bash
-go get -u github.com/bcicen/grmon/cmd/grmon
+go get -u github.com/bcicen/grmon
 ```
 
 ## Usage
@@ -15,20 +15,20 @@ go get -u github.com/bcicen/grmon/cmd/grmon
 Simply import and call `grmon.Start()` somewhere in your code:
 
 ```go
-import "github.com/bcicen/grmon"
+import "github.com/bcicen/grmon/agent"
 ...
 grmon.Start()
 ```
 
-alternatively, you may just use the handler registered on import:
+alternatively, you may just start the pprof server directly:
 
 ```go
 import (
-  _ "github.com/bcicen/grmon"
-  "net/http"
+	"net/http"
+	_ "net/http/pprof"
 )
 ...
-http.ListenAndServe(":1234", nil)
+go http.ListenAndServe(":1234", nil)
 ```
 
 now `grmon` can connect to the running program:
