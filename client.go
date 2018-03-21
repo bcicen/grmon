@@ -29,7 +29,7 @@ func getBody(url string) (bytes.Buffer, error) {
 }
 
 func poll() (routines Routines, err error) {
-	url := fmt.Sprintf("http://%s/debug/pprof/goroutine?debug=2", *hostFlag)
+	url := fmt.Sprintf("http://%s/%s/goroutine?debug=2", *hostFlag, *endpointFlag)
 	buf, err := getBody(url)
 	if err != nil {
 		return

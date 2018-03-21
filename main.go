@@ -27,9 +27,9 @@ var (
 // parse command line arguments
 var (
 	helpFlag     = flag.Bool("h", false, "display this help dialog")
-	hostFlag     = flag.String("host", "localhost:1234", "listening grmon host")
+	hostFlag     = flag.String("host", "localhost:1234", "target host")
 	selfFlag     = flag.Bool("self", false, "monitor grmon itself")
-	endpointFlag = flag.String("endpoint", "/debug/grmon", "URL endpoint for grmon")
+	endpointFlag = flag.String("endpoint", "/debug/pprof", "target path")
 	intervalFlag = flag.Int("i", 5, "time in seconds between refresh")
 )
 
