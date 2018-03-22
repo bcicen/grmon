@@ -55,9 +55,9 @@ q | exit grmon
 
 Option | Description | Default
 --- | --- | ---
--endpoint	| URL endpoint for grmon | /debug/grmon
--host | listening grmon host | localhost:1234
 -i | time in seconds between refresh, 0 to disable | 5
+-host | target host | localhost:1234
+-endpoint	| target endpoint path | /debug/pprof
 
 
 ## Roadmap
