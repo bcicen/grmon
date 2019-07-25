@@ -72,7 +72,7 @@ func ReadRoutines(buf bytes.Buffer) (routines Routines) {
 		}
 
 		line = strings.Trim(line, "\n")
-		if line != "" {
+		if line != "" && p != nil {
 			p.Trace = append(p.Trace, line)
 		}
 	}
