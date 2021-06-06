@@ -27,6 +27,7 @@ var (
 // parse command line arguments
 var (
 	helpFlag     = flag.Bool("h", false, "display this help dialog")
+	secureFlag   = flag.Bool("s", false, "use secure https protocol (default http)")
 	hostFlag     = flag.String("host", "localhost:1234", "target host")
 	selfFlag     = flag.Bool("self", false, "monitor grmon itself")
 	endpointFlag = flag.String("endpoint", "/debug/pprof", "target path")
