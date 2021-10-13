@@ -1,10 +1,14 @@
 NAME=grmon
 VERSION=0.1
 
+clean:
+	rm -rf _build _release
+
 build:
 	mkdir _build
 	go mod download
 	CGO_ENABLED=0 go build -ldflags "-w" -o _build/$(NAME)
+	cd _build; sha256sum * > sha256sums.txt
 
 install:
 	make build
