@@ -67,7 +67,7 @@ func (w *widgets) SetState(s string) {
 }
 
 func (w *widgets) SetTrace(a []string) {
-	var lines []string
+	lines := make([]string, 0, len(a))
 	for _, s := range a {
 		lines = append(lines, strings.Replace(s, "\t", "  ", -1))
 	}
